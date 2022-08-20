@@ -10,15 +10,15 @@ namespace from_branching_to_state_dp
     {
         public double Balance { get; private set; }
         private bool _IsVerified { get; set; }
+        private bool _IsClosed { get; set; }
 
-        public Account()
+        public bool IsFrozen { get; private set; }
+        public Action OnUnfreeze { get; }
+
+        public Account(Action onUnfreeze)
         {
             Balance = 0;
-        }
-
-        public Account(double balance)
-        {
-            Balance = balance;
+            OnUnfreeze = onUnfreeze;
         }
 
         public void Verify()
@@ -28,15 +28,48 @@ namespace from_branching_to_state_dp
 
         public void Deposit(double amount)
         {
+            if (_IsClosed)
+                return;
+
+            if (IsFrozen)
+            {
+                IsFrozen = false;
+                OnUnfreeze();
+            }
+
             Balance += amount;
         }
 
         public void Withdraw(double amount)
         {
+            if (_IsClosed)
+                return;
+
             if (!_IsVerified)
                 return;
 
+            if (IsFrozen)
+            {
+                IsFrozen = false;
+                OnUnfreeze();
+            }
+
             Balance -= amount;
+        }
+
+        public void Close()
+        {
+            _IsClosed = true;
+        }
+
+        public void Freeze()
+        {
+            if (_IsClosed)
+                return;
+            if (!_IsVerified)
+                return;
+
+            IsFrozen = true;
         }
     }
 }
