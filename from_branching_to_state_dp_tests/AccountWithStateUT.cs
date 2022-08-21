@@ -28,6 +28,7 @@ public class AccountWithStateUT
         //Arrange
         var account = new AccountWithState(() => { });
         //Act
+        account.Verify();
         account.Deposit(10);
         account.Deposit(2);
         //Assert
@@ -52,6 +53,7 @@ public class AccountWithStateUT
         //Arrange
         var account = new AccountWithState(() => { });
         //Act
+        account.Verify();
         account.Deposit(5);
         account.Verify();
         account.Withdraw(4);
@@ -65,6 +67,7 @@ public class AccountWithStateUT
         //Arrange
         var account = new AccountWithState(() => { });
         //Act
+        account.Verify();
         account.Deposit(5);
         account.Close();
         account.Withdraw(4);
@@ -81,7 +84,7 @@ public class AccountWithStateUT
         account.Verify();
         account.Freeze();
         //Assert
-        Assert.True(account.IsFrozen);
+        Assert.True(account.State is Frozen);
     }
 
     [Fact]
@@ -92,7 +95,7 @@ public class AccountWithStateUT
         //Act
         account.Freeze();
         //Assert
-        Assert.False(account.IsFrozen);
+        Assert.False(account.State is Frozen);
     }
 
     [Fact]
@@ -105,7 +108,7 @@ public class AccountWithStateUT
         account.Close();
         account.Freeze();
         //Assert
-        Assert.False(account.IsFrozen);
+        Assert.False(account.State is Frozen);
     }
 
     [Fact]
@@ -118,7 +121,7 @@ public class AccountWithStateUT
         account.Freeze();
         account.Deposit(5);
         //Assert
-        Assert.False(account.IsFrozen);
+        Assert.True(account.State is Active);
     }
 
     [Fact]
@@ -131,7 +134,7 @@ public class AccountWithStateUT
         account.Freeze();
         account.Withdraw(5);
         //Assert
-        Assert.False(account.IsFrozen);
+        Assert.True(account.State is Active);
     }
 
     [Fact]
